@@ -1,0 +1,39 @@
+{
+  "name": "allthedocs",
+  "version": "1.0.0",
+  "description": "Simple documentation generator using markdown",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "mocha src/**/**/*.test.js"
+  },
+  "keywords": [
+    "docs",
+    "documentation",
+    "literate",
+    "markdown"
+  ],
+  "author": "J. Steinbeck",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "filehound": "^1.16.0",
+    "highlight.js": "^9.10.0",
+    "marked": "^0.3.6",
+    "mkdirp": "^0.5.1",
+    "ncp": "^2.0.0",
+    "path-sort": "^0.1.0",
+    "rmdir-recursive": "0.0.1",
+    "vrep": "^1.1.0"
+  },
+  "bin": {
+    "allthedocs": "./bin/allthedocs.js"
+  },
+  "devDependencies": {
+    "browserify": "^14.1.0",
+    "domfx": "^0.3.2",
+    "t3js": "^2.7.0"
+  }
+}

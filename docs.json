@@ -1,0 +1,26 @@
+{
+    "name": "allthedocs",
+    "output": "dist/docs/",
+    "ignore": [
+        "dist/",
+        "node_modules/",
+        "resources/"
+    ],
+    "code": [
+        {
+            "extension": "js",
+            "language": "javascript",
+            "comments": [
+                {
+                    "type": "single",
+                    "start": "//"
+                },
+                {
+                    "type": "multiline",
+                    "start": "/*",
+                    "end": "*/"
+                }
+            ]
+        }
+    ]
+}
