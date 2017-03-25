@@ -3,10 +3,12 @@
 //
 // When you build your docs using `allthedocs build` this script is what is run.
 //
+/* eslint no-console:  off */
 
 const fs = require("fs");
 const md = require("marked");
 const copy = require("ncp").ncp;
+const assert = require("assert");
 const format = require("vrep").format;
 const mkdirp = require("mkdirp");
 const colors = require("colors");
@@ -18,29 +20,43 @@ const path = require("path");
 const normalize = path.normalize;
 const dirname = path.dirname;
 
-const rootDir = normalize(process.cwd() + "/");
-
-const info = JSON.parse("" + fs.readFileSync(normalize(rootDir + "/docs.json")));
-
-const resourceFolderName = "__atdresources";
-const outputDir = normalize(rootDir + "/" + info.output + "/");
-const outputResourceDir = normalize(outputDir + "/" + resourceFolderName + "/");
-const resourceDir = normalize(rootDir + "/resources/");
-const filesDir = normalize(resourceDir + "/files/");
-const templatesDir = normalize(resourceDir + "/templates/");
-
-const template = "" + fs.readFileSync(normalize(templatesDir + "/default.html"));
-const filesTemplate = "" + fs.readFileSync(normalize(templatesDir + "/file.html"));
-
-const ignore = info.ignore || ["node_modules", "dist"];
-
 md.setOptions({
-    highlight: function (code) {
+    highlight: function (code, language) {
+        
+        if (!language) {
+            return code;
+        }
+        
         return highlighter.highlightAuto(code).value;
     }
 });
 
-function build() {
+const ERRORS = {
+    NO_DOCS_FILE: "The docs.json file is missing in your project folder. Project not initialized?"
+};
+
+function build(dir) {
+    
+    const rootDir = dir || normalize(process.cwd() + "/");
+    const infoFilePath = normalize(rootDir + "/docs.json");
+    
+    if (!fs.existsSync(infoFilePath)) {
+        throw new Error(ERRORS.NO_DOCS_FILE);
+    }
+    
+    const info = JSON.parse("" + fs.readFileSync(infoFilePath));
+    
+    const resourceFolderName = "__atdresources";
+    const outputDir = normalize(rootDir + "/" + info.output + "/");
+    const outputResourceDir = normalize(outputDir + "/" + resourceFolderName + "/");
+    const resourceDir = normalize(__dirname + "/../resources/");
+    const filesDir = normalize(resourceDir + "/files/");
+    const templatesDir = normalize(resourceDir + "/templates/");
+    
+    const template = "" + fs.readFileSync(normalize(templatesDir + "/default.html"));
+    const filesTemplate = "" + fs.readFileSync(normalize(templatesDir + "/file.html"));
+    
+    const ignore = info.ignore || ["node_modules", "dist"];
     
     if (fs.existsSync(outputDir)) {
         rmdirRecursive(outputDir);
@@ -66,7 +82,7 @@ function build() {
             gatherFiles(rootDir, getCodeExtensions(info), logErrorOr(function (sourceFiles) {
                 
                 var docs, sources;
-                var allFiles = renderFiles(files.concat(sourceFiles).sort(sortFiles));
+                var allFiles = renderFiles(files.concat(sourceFiles).sort(fileSorter(rootDir)));
                 
                 console.log("\n Preparing " + colors.blue("markdown") + " files...\n");
                 
@@ -94,13 +110,13 @@ function build() {
                     "\n Writing doc files generated from " + colors.blue("markdown") + "..."
                 );
                 
-                writeDocFiles(docs);
+                writeDocFiles(docs, outputDir);
                 
                 console.log(
                     "\n Writing doc files generated from " + colors.yellow("source code") + "...\n"
                 );
                 
-                writeSourceDocFiles(sources);
+                writeSourceDocFiles(sources, outputDir);
                 
                 console.log(" --- " + colors.green("ALL DONE!") + " --- \n");
                 
@@ -109,7 +125,74 @@ function build() {
         }));
     });
     
+    //
+    // ## Putting content into the template
+    //
+    //     wrapContent :: object -> [object] -> object
+    //
+    function wrapContent(file, files) {
+        
+        var root = getRelativePathToRoot(file.path);
+        
+        console.log(
+            "     " +
+            (/\.md$/.test(file.path) ? colors.blue(file.path) : colors.yellow(file.path)) +
+            " -> " +
+            colors.green(outputDir.replace(rootDir, "") + getOutputPath(file.path))
+        );
+        
+        file.content = format(template, {
+            content: file.content,
+            title: getHeading(file.content),
+            rootDir: root,
+            resourceDir: root + resourceFolderName + "/",
+            projectName: info.name || "Documentation",
+            files: format(files, {rootDir: root})
+        });
+        
+        return file;
+    }
+    
+    function renderFiles(files) {
+        return files.map(function (file) {
+            
+            var path = file.replace(rootDir, "");
+            
+            return format(filesTemplate, {
+                icon: "file",
+                path: path,
+                href: getOutputPath(path)
+            });
+            
+        }).join("");
+    }
+    
+    function addIgnorePaths(query, dir) {
+        query.addFilter(function (file) {
+            return !ignore.some(function (pattern) {
+                return (new RegExp(pattern)).test(file._pathname.replace(dir, ""));
+            });
+        });
+    }
+    
+    function gatherDocFiles(dir, then) {
+        gatherFiles(dir, ["md"], then);
+    }
+    
+    function gatherFiles(dir, extensions, then) {
+        
+        var query = filehound.create().
+            ignoreHiddenDirectories().
+            paths(dir).
+            ext(extensions);
+        
+        addIgnorePaths(query, dir);
+        
+        query.find(then);
+    }
 }
+
+build.ERRORS = ERRORS;
 
 //
 // ## Parsing source code
@@ -202,33 +285,6 @@ function parseSourceFile(content) {
     }
 }
 
-//
-// ## Putting content into the template
-//
-//     wrapContent :: object -> [object] -> object
-//
-function wrapContent(file, files) {
-    
-    var root = getRelativePathToRoot(file.path);
-    
-    console.log(
-        "     " + (/\.md$/.test(file.path) ? colors.blue(file.path) : colors.yellow(file.path)) +
-        " -> " +
-        colors.green(outputDir.replace(rootDir, "") + getOutputPath(file.path))
-    );
-    
-    file.content = format(template, {
-        content: file.content,
-        title: getHeading(file.content),
-        rootDir: root,
-        resourceDir: root + resourceFolderName + "/",
-        projectName: info.name || "Documentation",
-        files: format(files, {rootDir: root})
-    });
-    
-    return file;
-}
-
 function getRelativePathToRoot(filePath) {
     
     var relativePath = normalize(
@@ -242,7 +298,10 @@ function getHeading(content) {
     return (content.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || "";
 }
 
-function writeDocFiles(files) {
+function writeDocFiles(files, outputDir) {
+    
+    assert.equal(typeof outputDir, "string");
+    
     files.forEach(function (item) {
         
         var path = normalize(outputDir + "/" + mdToHtmlExtension(item.path));
@@ -256,7 +315,10 @@ function writeDocFiles(files) {
     });
 }
 
-function writeSourceDocFiles(files) {
+function writeSourceDocFiles(files, outputDir) {
+    
+    assert.equal(typeof outputDir, "string");
+    
     files.forEach(function (item) {
         
         var path = normalize(outputDir + "/" + jsToHtmlExtension(item.path));
@@ -270,58 +332,47 @@ function writeSourceDocFiles(files) {
     });
 }
 
-function renderFiles(files) {
-    return files.map(function (file) {
-        
-        var path = file.replace(rootDir, "");
-        
-        return format(filesTemplate, {
-            icon: "file",
-            path: path,
-            href: getOutputPath(path)
-        });
-        
-    }).join("");
-}
-
 function getOutputPath(path) {
     return path.replace(".md", "") + ".html";
 }
 
-function sortFiles(a, b) {
+function fileSorter(rootDir) {
     
-    var aSplitLength, bSplitLength;
-    
-    if (a === b) {
-        return 0;
-    }
-    
-    a = a.replace(rootDir, "");
-    b = b.replace(rootDir, "");
-    
-    aSplitLength = a.split("/").length;
-    bSplitLength = b.split("/").length;
-    
-//
-// Folders should come first.
-//
-    if (aSplitLength !== bSplitLength) {
-        if (aSplitLength === 1) {
-            return 1;
+    return function sortFiles(a, b) {
+        
+        var aSplitLength, bSplitLength;
+        
+        if (a === b) {
+            return 0;
         }
-        else if (bSplitLength === 1) {
-            return -1;
+        
+        a = a.replace(rootDir, "");
+        b = b.replace(rootDir, "");
+        
+        aSplitLength = a.split("/").length;
+        bSplitLength = b.split("/").length;
+        
+    //
+    // Folders should come first.
+    //
+        if (aSplitLength !== bSplitLength) {
+            if (aSplitLength === 1) {
+                return 1;
+            }
+            else if (bSplitLength === 1) {
+                return -1;
+            }
         }
-    }
-    
-    if (a.split("/")[0] === b.split("/")[0]) {
-        return sortFiles(
-            a.split(a.split("/").shift()).pop(),
-            b.split(b.split("/").shift()).pop()
-        );
-    }
-    
-    return (a < b ? -1 : 1);
+        
+        if (a.split("/")[0] === b.split("/")[0]) {
+            return sortFiles(
+                a.split(a.split("/").shift()).pop(),
+                b.split(b.split("/").shift()).pop()
+            );
+        }
+        
+        return (a < b ? -1 : 1);
+    };
 }
 
 function mdToHtmlExtension(path) {
@@ -341,30 +392,6 @@ function logErrorOr(consume) {
         
         consume(data);
     };
-}
-
-function gatherDocFiles(dir, then) {
-    gatherFiles(dir, ["md"], then);
-}
-
-function gatherFiles(dir, extensions, then) {
-    
-    var query = filehound.create().
-        ignoreHiddenDirectories().
-        paths(dir).
-        ext(extensions);
-    
-    addIgnorePaths(query, dir);
-    
-    query.find(then);
-}
-
-function addIgnorePaths(query, dir) {
-    query.addFilter(function (file) {
-        return !ignore.some(function (pattern) {
-            return (new RegExp(pattern)).test(file._pathname.replace(dir, ""));
-        });
-    });
 }
 
 function getCodeExtensions(info) {
