@@ -1854,6 +1854,8 @@ T3.Application.addService("heading", require("./services/heading"));
 T3.Application.addModule("navbar", require("./modules/navbar"));
 T3.Application.addModule("files", require("./modules/files"));
 
+setTimeout(T3.Application.getService("heading").linkHeadings, 500);
+
 T3.Application.init();
 
 },{"./modules/files":7,"./modules/navbar":8,"./services/heading":9,"t3js":5}],7:[function(require,module,exports){
@@ -1973,7 +1975,8 @@ module.exports = create;
 //
 // # [T3 Service] Heading
 //
-// A [T3 service]() that extracts the headings from the page content.
+// A [T3 service](http://t3js.org/docs/guides/services) that extracts the headings from
+// the page content.
 //
 
 function create() {
@@ -1989,6 +1992,7 @@ function create() {
             Array.prototype.forEach.call(elements, function (element) {
                 headings.push({
                     id: element.getAttribute("id"),
+                    element: element,
                     level: level,
                     text: element.textContent
                 });
@@ -1998,8 +2002,29 @@ function create() {
         return headings;
     }
     
+//
+// ## [method] linkHeadings
+//
+//     linkHeadings :: undefined
+//
+// Replaces all regular heading elements in `#page` that have an ID with a link to its own ID so
+// that a user can click on a heading to get a shareable link to this part of the document.
+//
+    function linkHeadings() {
+        
+        var headings = getHeadings();
+        
+        console.log(headings);
+        
+        headings.forEach(function (heading) {
+            heading.element.innerHTML = '<a href="#' + heading.id + '">' +
+                heading.element.innerHTML + "</a>";
+        });
+    }
+    
     return {
-        getHeadings: getHeadings
+        getHeadings: getHeadings,
+        linkHeadings: linkHeadings
     };
 }
 
