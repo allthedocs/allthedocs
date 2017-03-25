@@ -18,6 +18,7 @@ function create() {
             Array.prototype.forEach.call(elements, function (element) {
                 headings.push({
                     id: element.getAttribute("id"),
+                    element: element,
                     level: level,
                     text: element.textContent
                 });
@@ -27,8 +28,29 @@ function create() {
         return headings;
     }
     
+//
+// ## [method] linkHeadings
+//
+//     linkHeadings :: undefined
+//
+// Replaces all regular heading elements in `#page` that have an ID with a link to its own ID so
+// that a user can click on a heading to get a shareable link to this part of the document.
+//
+    function linkHeadings() {
+        
+        var headings = getHeadings();
+        
+        console.log(headings);
+        
+        headings.forEach(function (heading) {
+            heading.element.innerHTML = '<a href="#' + heading.id + '">' +
+                heading.element.innerHTML + "</a>";
+        });
+    }
+    
     return {
-        getHeadings: getHeadings
+        getHeadings: getHeadings,
+        linkHeadings: linkHeadings
     };
 }
 
