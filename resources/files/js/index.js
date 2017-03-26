@@ -58,9 +58,23 @@ function fadeEffect (type, element, duration, then) {
 
 function fadeIn (element, duration, then) {
     
-    if (element.style.display === "none") {
+    var ownDisplay = element.style.display;
+    
+//
+// If the element's own value for `display` is `none`, we have to remove
+// this value; if after that the element is still set to `none` for its
+// computed values, it means that `none` was set in CSS and we have to
+// assume this is a block element. Setting `display` to `""` in this case
+// wouldn't accomplish anything.
+//
+    if (ownDisplay === "none") {
         element.style.opacity = "0";
         element.style.display = "";
+    }
+    
+    if (window.getComputedStyle(element).display === "none") {
+        element.style.opacity = "0";
+        element.style.display = "block";
     }
     
     return fadeEffect("in", element, duration, then);
@@ -147,8 +161,8 @@ function getOldStyles (element) {
             computed: {}
         };
         
-        if (element.style.display === "none") {
-            element.style.display = "";
+        if (window.getComputedStyle(element).display === "none") {
+            element.style.display = "block";
             value.computed = extractRelevantStyles(window.getComputedStyle(element));
             element.style.display = "none";
         }
@@ -208,7 +222,12 @@ function slideEffect (type, element, duration, then) {
     element.style.overflow = "hidden";
     
     if (type === "in") {
-        element.style.display = "";
+        if (window.getComputedStyle(element).display === "none") {
+            element.style.display = "block";
+        }
+        else {
+            element.style.display = "";
+        }
     }
     
     return slide(
@@ -249,12 +268,25 @@ function toPx (value) {
 }
 
 function hasHeight (element) {
-    return window.getComputedStyle(element).height !== "0px";
+    
+    var height;
+    var style = window.getComputedStyle(element);
+    
+    if (style.display === "none") {
+        element.style.display = "block";
+        height = window.getComputedStyle(element).height;
+        element.style.display = "none";
+    }
+    else {
+        height = style.height;
+    }
+    
+    return height !== "0px";
 }
 
 function slideIn (element, duration, then) {
     
-    if (hasHeight(element)) {
+    if (window.getComputedStyle(element).display !== "none" && hasHeight(element)) {
         return utils.getThenArgument.apply(this, arguments)();
     }
     
@@ -369,8 +401,8 @@ function getHeight (element) {
 //
 // If an element is hidden, it needs to be made visible temporarily to calculate its real height.
 //
-    if (element.style.display === "none") {
-        element.style.display = "";
+    if (window.getComputedStyle(element).display === "none") {
+        element.style.display = "block";
         height = window.getComputedStyle(element).height;
         element.style.display = "none";
     }
@@ -394,7 +426,7 @@ function ensureIsPositive (v) {
 }
 
 function isHidden (element) {
-    return element.style.display === "none";
+    return window.getComputedStyle(element).display === "none";
 }
 
 function isOpacityZero (element) {
@@ -2013,8 +2045,6 @@ function create() {
     function linkHeadings() {
         
         var headings = getHeadings();
-        
-        console.log(headings);
         
         headings.forEach(function (heading) {
             heading.element.innerHTML = '<a href="#' + heading.id + '">' +

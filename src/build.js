@@ -20,6 +20,9 @@ const path = require("path");
 const normalize = path.normalize;
 const dirname = path.dirname;
 
+var buildNavigation = require("./build-navigation");
+var getRelativePathToRoot = require("./utils/getRelativePathToRoot");
+
 md.setOptions({
     highlight: function (code, language) {
         
@@ -57,6 +60,8 @@ function build(dir) {
     const filesTemplate = "" + fs.readFileSync(normalize(templatesDir + "/file.html"));
     
     const ignore = info.ignore || ["node_modules", "dist"];
+    
+    var navigation = info.navigation ? buildNavigation(info.navigation, templatesDir) : "";
     
     if (fs.existsSync(outputDir)) {
         rmdirRecursive(outputDir);
@@ -125,11 +130,11 @@ function build(dir) {
         }));
     });
     
-    //
-    // ## Putting content into the template
-    //
-    //     wrapContent :: object -> [object] -> object
-    //
+//
+// ## Putting content into the template
+//
+//     wrapContent :: object -> [object] -> object
+//
     function wrapContent(file, files) {
         
         var root = getRelativePathToRoot(file.path);
@@ -143,11 +148,14 @@ function build(dir) {
         
         file.content = format(template, {
             content: file.content,
-            title: getHeading(file.content),
+            title: getHeading(file.content) || file.origin.split(path.sep).pop(),
             rootDir: root,
             resourceDir: root + resourceFolderName + "/",
             projectName: info.name || "Documentation",
-            files: format(files, {rootDir: root})
+            files: format(files, {rootDir: root}),
+            navigation: format(navigation, {
+                rootDir: root
+            })
         });
         
         return file;
@@ -285,15 +293,6 @@ function parseSourceFile(content) {
     }
 }
 
-function getRelativePathToRoot(filePath) {
-    
-    var relativePath = normalize(
-        path.relative(normalize("/" + dirname(filePath)), normalize("/")) + "/"
-    );
-    
-    return (relativePath === "/" ? "" : relativePath);
-}
-
 function getHeading(content) {
     return (content.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || "";
 }
@@ -352,9 +351,9 @@ function fileSorter(rootDir) {
         aSplitLength = a.split("/").length;
         bSplitLength = b.split("/").length;
         
-    //
-    // Folders should come first.
-    //
+//
+// Folders should come first.
+//
         if (aSplitLength !== bSplitLength) {
             if (aSplitLength === 1) {
                 return 1;

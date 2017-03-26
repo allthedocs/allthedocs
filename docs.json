@@ -6,6 +6,11 @@
         "node_modules/",
         "resources/"
     ],
+    "navigation": {
+        "Home": "index.html",
+        "User Guide": "docs/user/index.html",
+        "Development": "docs/dev/index.html"
+    },
     "code": [
         {
             "extension": "js",

@@ -33,7 +33,7 @@ h1 {
 
 h2 {
     font-size: 1.8em;
-    padding-top: 50px;
+    padding-top: 40px;
 }
 
 h3 {
@@ -177,6 +177,80 @@ h1 {
     background: rgba(100, 100, 100, 0.05);
 }
 
+.nav {
+    height: 40px;
+    margin-top: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    color: white;
+}
+
+.nav a {
+    display: block;
+    font-size: 18px;
+    margin-right: 30px;
+}
+
+.nav > .nav-list {
+    max-width: 900px;
+    padding-left: 25px;
+    margin: auto;
+}
+
+.nav-item {
+    position: relative;
+    display: inline-block;
+    line-height: 40px;
+    white-space: nowrap;
+}
+
+.nav-label {
+    cursor: pointer;
+    display: block;
+}
+
+.nav-label:after {
+    content: " ⯆";
+    font-size: 1em;
+    color: rgba(240, 240, 240, 0.8);
+}
+
+.nav-sub-list {
+    position: absolute;
+    top: 40px;
+    display: none;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.8);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.nav-sub-list .nav-item {
+    display: block;
+    margin-bottom: 5px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+}
+
+.nav-sub-list .nav-item:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.nav-sub-list .nav-item:last-child {
+    margin-bottom: 0;
+}
+
+.nav-sub-list a {
+    display: block;
+    margin-right: 0;
+    padding: 5px 10px;
+    font-size: 18px;
+}
+
+.nav-item:hover .nav-sub-list,
+.navi-item:focus .nav-sub-list {
+    display: block;
+}
+
 .search-container {
     position: relative;
     display: inline-block;
@@ -197,6 +271,7 @@ h1 {
     right: 0;
     bottom: 0;
     z-index: 20000;
+    display: none;
     background: rgba(0, 0, 0, 0.5);
     overflow-y: scroll;
     padding-bottom: 40px;
@@ -249,7 +324,7 @@ h1 {
 #content {
     position: fixed;
     left: 0;
-    top: 55px;
+    top: 90px;
     right: 0;
     bottom: 0;
     overflow: auto;
