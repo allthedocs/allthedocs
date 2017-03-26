@@ -7,9 +7,9 @@
         "resources/"
     ],
     "navigation": {
-        "Home": "index.html",
-        "User Guide": "docs/user/index.html",
-        "Development": "docs/dev/index.html"
+        "Home": "index.md",
+        "User Guide": "docs/user/index.md",
+        "Development": "docs/dev/index.md"
     },
     "code": [
         {

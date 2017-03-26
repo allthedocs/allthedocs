@@ -7,6 +7,8 @@ var assert = require("assert");
 var format = require("vrep").format;
 var normalize = require("path").normalize;
 
+var urlHelper = require("./utils/urls");
+
 var NAV_FILE = "navigation.html";
 var NAV_ITEM_FILE = "navigation-item.html";
 var NAV_LIST_FILE = "navigation-list.html";
@@ -45,7 +47,7 @@ function buildNavigation(data, templateDir) {
         else {
             return format(navItemTemplate, {
                 label: key,
-                href: "{rootDir}" + item
+                href: "{rootDir}" + prepareUrl(item)
             });
         }
     }).join("");
@@ -62,7 +64,7 @@ function buildNavigation(data, templateDir) {
             
             return format(navItemTemplate, {
                 label: key,
-                href: "{rootDir}" + subItem
+                href: "{rootDir}" + prepareUrl(subItem)
             });
         }).join("");
         
@@ -71,6 +73,10 @@ function buildNavigation(data, templateDir) {
             items: items
         });
     }
+}
+
+function prepareUrl(url) {
+    return urlHelper.isRelativeUrl(url) ? urlHelper.sourceUrlToOutputUrl(url) : url;
 }
 
 module.exports = buildNavigation;
