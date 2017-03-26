@@ -40,8 +40,6 @@ function create() {
         
         var headings = getHeadings();
         
-        console.log(headings);
-        
         headings.forEach(function (heading) {
             heading.element.innerHTML = '<a href="#' + heading.id + '">' +
                 heading.element.innerHTML + "</a>";
