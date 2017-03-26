@@ -1,6 +1,6 @@
 {
   "name": "allthedocs",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Simple documentation generator using markdown",
   "main": "index.js",
   "directories": {
@@ -29,6 +29,14 @@
     "rmdir-recursive": "0.0.1",
     "vrep": "^1.1.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allthedocs/allthedocs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/allthedocs/allthedocs/issues"
+  },
+  "homepage": "https://github.com/allthedocs/allthedocs#readme",
   "bin": {
     "allthedocs": "./bin/allthedocs.js"
   },
