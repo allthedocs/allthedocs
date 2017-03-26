@@ -28,18 +28,21 @@ var renderer = new md.Renderer();
 
 renderer.link = function (href, title, text) {
     
+    var isExternal = true;
     var linkType = "external-link";
     
     if (urlHelper.isRelativeUrl(href)) {
         href = urlHelper.sourceUrlToOutputUrl(href);
+        isExternal = false;
         linkType = "internal-link";
     }
     
-    return format('<a href="{href}" title="{title}" class="{classes}">{text}</a>', {
+    return format('<a href="{href}" title="{title}" {target} class="{classes}">{text}</a>', {
         href: href,
         title: title || "",
         classes: linkType,
-        text: text
+        text: text,
+        target: isExternal ? 'target="_blank"' : ""
     });
 };
 

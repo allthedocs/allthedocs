@@ -91,6 +91,12 @@ h1 {
     fill: black;
 }
 
+.external-link:after {
+    content: " 🡵";
+    text-decoration: none;
+    white-space: nowrap;
+}
+
 .navbar {
     position: fixed;
     left: 0;
