@@ -1,16 +1,20 @@
+[%%
+    navi:parent=../index.md
+    navi:next=../dev/index.md
+%%]
+
 # User Manual
 
-A table looks like this:
+This manual walks you through all you need to know to use allthedocs as the documentation
+system for your project.
 
-| Command | Description |
-|:--------|:-----------:|
-|foo      | bar         |
 
 ## Installation
 
 You can install allthedocs using NPM:
 
     npm install -g allthedocs
+
 
 ## Usage
 

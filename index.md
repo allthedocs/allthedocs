@@ -5,6 +5,6 @@ Bla bla bla
 
 ## Table of Contents
 
- * [Documentation](docs/index.html)
-  * [User Manual](docs/user/index.html)
-  * [Developer Manual](docs/dev/index.html)
+ * [Documentation](docs/index.md)
+  * [User Manual](docs/user/index.md)
+  * [Developer Manual](docs/dev/index.md)

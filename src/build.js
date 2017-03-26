@@ -23,7 +23,27 @@ const dirname = path.dirname;
 var buildNavigation = require("./build-navigation");
 var getRelativePathToRoot = require("./utils/getRelativePathToRoot");
 
+var renderer = new md.Renderer();
+
+renderer.link = function (href, title, text) {
+    
+    var linkType = "external-link";
+    
+    if (isRelativeUrl(href)) {
+        href = sourceUrlToOutputUrl(href);
+        linkType = "internal-link";
+    }
+    
+    return format('<a href="{href}" title="{title}" class="{classes}">{text}</a>', {
+        href: href,
+        title: title || "",
+        classes: linkType,
+        text: text
+    });
+};
+
 md.setOptions({
+    renderer: renderer,
     highlight: function (code, language) {
         
         if (!language) {
@@ -397,6 +417,29 @@ function getCodeExtensions(info) {
     return info.code.map(function (language) {
         return language.extension;
     });
+}
+
+function isRelativeUrl(url) {
+    return !(/:\/\//).test(url);
+}
+
+function sourceUrlToOutputUrl(url) {
+    
+    var fileName = url.split("/").pop();
+    
+    if (!fileName) {
+        return url;
+    }
+    
+    if (isMdFile(url)) {
+        return url.replace(/\.md$/, ".html");
+    }
+    
+    return url + ".html";
+}
+
+function isMdFile(fileName) {
+    return (/\.md$/).test(fileName);
 }
 
 module.exports = build;
