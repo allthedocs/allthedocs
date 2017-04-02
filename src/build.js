@@ -72,6 +72,7 @@ function build(dir) {
     }
     
     const info = JSON.parse("" + fs.readFileSync(infoFilePath));
+    var codeInfo = normalizeCodeInfo(info.code);
     
     const resourceFolderName = "__atdresources";
     const outputDir = normalize(rootDir + "/" + info.output + "/");
@@ -132,7 +133,9 @@ function build(dir) {
                     return wrapContent({
                         origin: file,
                         path: file.replace(rootDir, ""),
-                        content: parseSourceFile("" + fs.readFileSync(file))
+                        content: parseSourceFile(
+                            "" + fs.readFileSync(file), codeInfo[getExtension(file)]
+                        )
                     }, allFiles);
                 });
                 
@@ -247,7 +250,7 @@ build.ERRORS = ERRORS;
 //
 //     parseSourceFile :: string -> string
 //
-function parseSourceFile(content) {
+function parseSourceFile(content, language) {
     
     var lines = content.split("\n");
     var commentLinePattern = /^\/\/[ ]{0,1}(.*$)/;
@@ -314,7 +317,30 @@ function parseSourceFile(content) {
 //     getLineType :: string -> string
 //
     function getLineType(line) {
-        return commentLinePattern.test(line) ? "comment" : "code";
+        return (
+            language.comments.some(function (comment) {
+                
+                if (comment.type !== "single") {
+                    return false;
+                }
+                
+                return (new RegExp(comment.start)).test(line);
+                
+            }) ?
+            "comment" :
+            "code"
+        );
+    }
+    
+    function getCommentLineInfo(line) {
+        return language.comments.find(function (comment) {
+            
+            if (comment.type !== "single") {
+                return false;
+            }
+            
+            return (new RegExp(comment.start)).test(line);
+        });
     }
     
 //
@@ -329,7 +355,10 @@ function parseSourceFile(content) {
 //     uncomment :: string -> string
 //
     function uncomment(line) {
-        return (line.match(commentLinePattern)[1] || "");
+        
+        var info = getCommentLineInfo(line);
+        
+        return line.replace(new RegExp(info.start || ""), "");
     }
 }
 
@@ -458,6 +487,23 @@ function getCodeExtensions(info) {
     return info.code.map(function (language) {
         return language.extension;
     });
+}
+
+function getExtension(file) {
+    return file.split(".").pop();
+}
+
+function normalizeCodeInfo(code) {
+    
+    var normalized = {};
+    
+    code = code || [];
+    
+    code.forEach(function (language) {
+        normalized[language.extension] = language;
+    });
+    
+    return normalized;
 }
 
 module.exports = build;

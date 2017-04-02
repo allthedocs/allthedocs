@@ -22,12 +22,31 @@
             "comments": [
                 {
                     "type": "single",
-                    "start": "//"
+                    "start": "^//[ ]{0,1}"
+                }
+            ]
+        },
+        {
+            "extension": "scss",
+            "language": "scss",
+            "comments": [
+                {
+                    "type": "single",
+                    "start": "^//[ ]{0,1}"
+                }
+            ]
+        },
+        {
+            "extension": "php",
+            "language": "php",
+            "comments": [
+                {
+                    "type": "single",
+                    "start": "^//[ ]{0,1}"
                 },
                 {
-                    "type": "multiline",
-                    "start": "/*",
-                    "end": "*/"
+                    "type": "single",
+                    "start": "^#[ ]{0,1}"
                 }
             ]
         }

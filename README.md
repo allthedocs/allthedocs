@@ -126,5 +126,5 @@ Finally, the `comments` property tells allthedocs which kind of comments should 
 markdown instead of interpreting them as part of the normal code. The `comments` property
 must be an array of objects. Each object must specify the type of comment (currently only
 `single` for single-line comments is supported, `multi` (for multi-line comments) is not
-yet implemented). The `start` property is a string and tells allthedocs which characters
-precede a single-line comment.
+yet implemented). The `start` property is a string containing a JavaScript regular expression
+pattern and tells allthedocs which characters precede a single-line comment.
