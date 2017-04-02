@@ -8,17 +8,21 @@ function isRelativeUrl(url) {
 
 function sourceUrlToOutputUrl(url) {
     
-    var fileName = url.split("/").pop();
+    var parts = url.split("#");
+    var path = parts[0];
+    var hash = parts[1] || "";
+    var appendix = hash ? "#" + hash : "";
+    var fileName = path.split("/").pop();
     
     if (!fileName) {
         return url;
     }
     
-    if (isMdFile(url)) {
-        return url.replace(/\.md$/, ".html");
+    if (isMdFile(path)) {
+        return path.replace(/\.md$/, ".html") + appendix;
     }
     
-    return url + ".html";
+    return path + ".html" + appendix;
 }
 
 function isMdFile(fileName) {
