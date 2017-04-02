@@ -5,8 +5,10 @@ Need a simple documentation solution that works with both markdown files and
 markdown-formatted comments in your source code? Then look no further, because that's
 exactly what allthedocs is all about.
 
-A fair warning: this project is very young (< v1.0.0) and the API will probably change and
+/---- info
+**Info:** this project is very young (< v1.0.0) and the API will probably change and
 evolve rapidly.
+----/
 
 
 ## Features

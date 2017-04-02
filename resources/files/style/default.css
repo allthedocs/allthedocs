@@ -337,6 +337,24 @@ h1 {
     padding-top: 10px;
 }
 
+#content .block {
+    display: block;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+#content .warning {
+    background: orangered;
+    color: white;
+}
+
+#content .info {
+    background: powderblue;
+    color: black;
+}
+
 #page {
     max-width: 900px;
     margin: auto;

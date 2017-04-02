@@ -120,7 +120,7 @@ function build(dir) {
                     return wrapContent({
                         origin: file,
                         path: file.replace(rootDir, ""),
-                        content: md.parse("" + fs.readFileSync(file))
+                        content: md.parse(insertBlocks("" + fs.readFileSync(file)))
                     }, allFiles);
                 });
                 
@@ -293,14 +293,14 @@ function parseSourceFile(content) {
     });
     
     return md.parse(
-        sections.reduce(function (all, section) {
+        insertBlocks(sections.reduce(function (all, section) {
             if (section.type === "comment") {
                 return all + "\n" + section.lines.join("\n");
             }
             else {
                 return all + "\n```javascript\n" + section.lines.join("\n") + "\n```\n";
             }
-        }, "")
+        }, ""))
     );
     
 //
@@ -431,6 +431,27 @@ function logErrorOr(consume) {
         
         consume(data);
     };
+}
+
+//
+// Blocks are `div` elements with classes. They look like this:
+//
+// /---- warning
+// This is a warning message!
+// ----/
+//
+// And are written like this:
+//
+//     /---- warning
+//     This is a warning message!
+//     ----/
+//
+function insertBlocks(content) {
+    return content.split("\n").map(function (line) {
+        return line.
+            replace(/^\/----(.*)/, '<div class="block $1">\n').
+            replace(/^----\/.*/, "</div>");
+    }).join("\n");
 }
 
 function getCodeExtensions(info) {

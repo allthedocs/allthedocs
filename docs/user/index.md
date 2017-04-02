@@ -1,22 +1,14 @@
-[%%
-    navi:parent=../index.md
-    navi:next=../dev/index.md
-%%]
 
 # User Manual
 
 This manual walks you through all you need to know to use allthedocs as the documentation
 system for your project.
 
+/---- info
+If you haven't yet, please read the [README / Quickstart Guide](../../README.md) first.
+----/
 
-## Installation
+## Table of Contents
 
-You can install allthedocs using NPM:
-
-    npm install -g allthedocs
-
-
-## Usage
-
-    allthedocs init
-    allthedocs build
+* Markdown enhancements
+ * [Blocks](blocks.md)
