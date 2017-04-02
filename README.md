@@ -67,6 +67,10 @@ file must be called `docs.json` and it looks like this:
             "FAQ": "docs/faq.md"
         }
     },
+    "paths": {
+        "sourceDir": "src/",
+        "userGuideDir": "docs/user/"
+    },
     "code": [
         {
             "extension": "js",
@@ -85,8 +89,10 @@ file must be called `docs.json` and it looks like this:
 | Property          | Description                                                                 |
 |:------------------|:----------------------------------------------------------------------------|
 | `name`            | The name of your project.                                                   |
-| `ignore`          | A list of regular expressions for which files/folders to ignore              |
+| `output`          | The directory where the generated docs should be written to.                |
+| `ignore`          | A list of regular expressions for which files/folders to ignore.            |
 | `navigation`      | The links shown in your doc's navigation (optional).                        |
+| `paths`           | An object mappings variable names to paths.                                 |
 | `code`            | A list of file extensions/languages of source code files to parse.          |
 
 The `ignore` property expects regular expressions in the form as you would use in the string
@@ -98,6 +104,12 @@ your docs. You can link directly to markdown files here. The navigation can be t
 e.g. you can have a label that doesn't map to a URL itself, but shows a list of links when
 hovered. The `navigation` property is also entirely optional; if you leave it out, the navigation
 strip will not be shown in your generated docs.
+
+The `paths` property allows you to define variables for file system / URL paths. The object's
+keys are the variable names, the values are relative paths from the root of the project (or where
+the `docs.json` file is kept). These variables can then be used in your markdown as
+`{variableName}`.
+
 
 #### The `code` property
 
