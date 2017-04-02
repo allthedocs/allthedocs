@@ -86,6 +86,7 @@ function build(dir) {
     const ignore = info.ignore || ["node_modules", "dist"];
     
     var navigation = info.navigation ? buildNavigation(info.navigation, templatesDir) : "";
+    var paths = info.paths || {};
     
     if (fs.existsSync(outputDir)) {
         rmdirRecursive(outputDir);
@@ -171,7 +172,7 @@ function build(dir) {
         );
         
         file.content = format(template, {
-            content: file.content,
+            content: insertPathVars(file.content),
             title: getHeading(file.content) || file.origin.split(path.sep).pop(),
             rootDir: root,
             resourceDir: root + resourceFolderName + "/",
@@ -183,6 +184,21 @@ function build(dir) {
         });
         
         return file;
+    }
+    
+    function insertPathVars(content) {
+        return format(content, createPathVars(paths));
+    }
+    
+    function createPathVars(paths) {
+        
+        var pathVars = {};
+        
+        Object.keys(paths).forEach(function (key) {
+            pathVars[key] = "{rootDir}" + paths[key];
+        });
+        
+        return pathVars;
     }
     
     function renderFiles(files) {

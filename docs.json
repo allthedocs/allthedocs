@@ -11,6 +11,10 @@
         "User Guide": "docs/user/index.md",
         "Development": "docs/dev/index.md"
     },
+    "paths": {
+        "userDir": "docs/user/",
+        "devDir": "docs/dev/"
+    },
     "code": [
         {
             "extension": "js",
