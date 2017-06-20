@@ -10,7 +10,6 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
     line-height: 1.5em;
     background: rgb(240, 240, 240);
-    overflow: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -98,14 +97,8 @@ h1 {
 }
 
 .navbar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    z-index: 100;
-    background: #2f4f4f;
+    background: black;
     color: white;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     line-height: 0;
 }
@@ -134,10 +127,7 @@ h1 {
     min-width: 40px;
     color: rgb(220, 220, 220);
     background: rgba(0, 0, 0, 0.15);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(240, 240, 240, 0.2);
-    border-left: 1px solid rgba(240, 240, 240, 0.2);
-    border-radius: 3px;
+    border: 0;
     font-size: 1.2em;
     cursor: pointer;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
@@ -146,11 +136,6 @@ h1 {
 
 .navbar .button:hover {
     color: rgb(240, 240, 240);
-    background: rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.3);
-    border-top: 1px solid rgba(240, 240, 240, 0.3);
-    border-left: 1px solid rgba(240, 240, 240, 0.3);
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .navbar .project-name {
@@ -186,7 +171,7 @@ h1 {
 .nav {
     height: 40px;
     margin-top: 5px;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.08);
     color: white;
 }
 
@@ -222,6 +207,7 @@ h1 {
 
 .nav-sub-list {
     position: absolute;
+    z-index: 1000;
     top: 40px;
     display: none;
     padding: 5px;
@@ -328,12 +314,6 @@ h1 {
 }
 
 #content {
-    position: fixed;
-    left: 0;
-    top: 90px;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
     padding-top: 10px;
 }
 
