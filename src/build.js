@@ -77,7 +77,9 @@ function build(dir) {
     const resourceFolderName = "__atdresources";
     const outputDir = normalize(rootDir + "/" + info.output + "/");
     const outputResourceDir = normalize(outputDir + "/" + resourceFolderName + "/");
-    const resourceDir = normalize(__dirname + "/../resources/");
+    const jsOutputBundlePath = normalize(outputResourceDir + "/index.js");
+    const frontendIndexFile = normalize(__dirname + "/../frontend.js");
+    const resourceDir = normalize(info.themeDir || (__dirname + "/../resources/"));
     const filesDir = normalize(resourceDir + "/files/");
     const templatesDir = normalize(resourceDir + "/templates/");
     
@@ -103,6 +105,8 @@ function build(dir) {
         if (error) {
             console.error(error);
         }
+        
+        fs.writeFileSync(jsOutputBundlePath, fs.readFileSync(frontendIndexFile));
         
         console.log("\n Finding and parsing " + colors.blue("markdown") + " files...");
         

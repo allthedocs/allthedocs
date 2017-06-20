@@ -4,7 +4,7 @@ const fs = require("fs");
 const browserify = require("browserify");
 
 const jsIndexFilePath = "./src/frontend/index.js";
-const bundlePath = path.join(__dirname, "resources", "files", "js", "index.js");
+const bundlePath = path.join(__dirname, "frontend.js");
     
 browserify().
     require(require.resolve(jsIndexFilePath), {

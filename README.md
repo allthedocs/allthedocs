@@ -56,6 +56,7 @@ file must be called `docs.json` and it looks like this:
 {
     "name": "My Project's Name",
     "output": "path/to/your/output/directory/",
+    "themeDir": "path/to/custom/theme/",
     "ignore": [
         "path/to/your/output/directory/",
         "node_modules"
@@ -90,10 +91,15 @@ file must be called `docs.json` and it looks like this:
 |:------------------|:----------------------------------------------------------------------------|
 | `name`            | The name of your project.                                                   |
 | `output`          | The directory where the generated docs should be written to.                |
+| `themeDir`        | The path to a custom theme (optional).                                      |
 | `ignore`          | A list of regular expressions for which files/folders to ignore.            |
 | `navigation`      | The links shown in your doc's navigation (optional).                        |
 | `paths`           | An object mappings variable names to paths.                                 |
 | `code`            | A list of file extensions/languages of source code files to parse.          |
+
+The `themeDir` property allows you to use your own custom theme for the generated docs. Take
+a look at the `resources/` folder in the `allthedocs` project for an example you can copy and
+modify.
 
 The `ignore` property expects regular expressions in the form as you would use in the string
 argument to JavaScript's
