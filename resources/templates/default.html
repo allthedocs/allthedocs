@@ -16,14 +16,14 @@
         <div class="navbar" data-module="navbar">
             <div class="content">
                 <div class="buttons">
-                    <button class="button" data-type="filesToggler">
+                    <a href="{rootDir}__files.html" class="button" data-type="filesToggler">
                         <svg class="fill-white"
                              xmlns="http://www.w3.org/2000/svg"
                              width="28"
                              height="28">
                             <use xlink:href="#fa-folder-open"></use>
                         </svg>
-                    </button>
+                    </a>
                 </div>
                 <div class="links">
                     <a class="project-name" href="{rootDir}index.html">
@@ -36,27 +36,6 @@
         <div id="content">
             <div id="page">
                 {content}
-            </div>
-        </div>
-        <div id="files" data-module="files" data-type="tableOfContents">
-            <div class="content" data-type="overlayContent">
-                
-                <button class="close-button" data-type="closeButton">
-                    <svg class="fill-black no-events"
-                         xmlns="http://www.w3.org/2000/svg"
-                         width="36"
-                         height="36">
-                        <use xlink:href="#fa-close"></use>
-                    </svg>
-                </button>
-                
-                <h2 class="overlay-heading">Documents</h2>
-                
-                <table class="file-list">
-                    <tbody>
-                        {files}
-                    </tbody>
-                </table>
             </div>
         </div>
         <div class="hidden">

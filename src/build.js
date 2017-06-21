@@ -77,6 +77,7 @@ function build(dir) {
     const resourceFolderName = "__atdresources";
     const outputDir = normalize(rootDir + "/" + info.output + "/");
     const outputResourceDir = normalize(outputDir + "/" + resourceFolderName + "/");
+    const fileListOutputPath = normalize(outputDir + "/__files.html");
     const jsOutputBundlePath = normalize(outputResourceDir + "/index.js");
     const frontendIndexFile = normalize(__dirname + "/../frontend.js");
     const resourceDir = normalize(info.themeDir || (__dirname + "/../resources/"));
@@ -84,6 +85,7 @@ function build(dir) {
     const templatesDir = normalize(resourceDir + "/templates/");
     
     const template = "" + fs.readFileSync(normalize(templatesDir + "/default.html"));
+    const fileListTemplate = "" + fs.readFileSync(normalize(templatesDir + "/file-list.html"));
     const filesTemplate = "" + fs.readFileSync(normalize(templatesDir + "/file.html"));
     
     const ignore = info.ignore || ["node_modules", "dist"];
@@ -126,7 +128,7 @@ function build(dir) {
                         origin: file,
                         path: file.replace(rootDir, ""),
                         content: md.parse(insertBlocks("" + fs.readFileSync(file)))
-                    }, allFiles);
+                    });
                 });
                 
                 console.log(
@@ -140,8 +142,14 @@ function build(dir) {
                         content: parseSourceFile(
                             "" + fs.readFileSync(file), codeInfo[getExtension(file)]
                         )
-                    }, allFiles);
+                    });
                 });
+                
+                fs.writeFileSync(fileListOutputPath, wrapContent({
+                    origin: "",
+                    path: "__files",
+                    content: format(fileListTemplate, {files: allFiles})
+                }).content);
                 
                 console.log(
                     "\n Writing doc files generated from " + colors.blue("markdown") + "..."
@@ -165,9 +173,9 @@ function build(dir) {
 //
 // ## Putting content into the template
 //
-//     wrapContent :: object -> [object] -> object
+//     wrapContent :: object -> object
 //
-    function wrapContent(file, files) {
+    function wrapContent(file) {
         
         var root = getRelativePathToRoot(file.path);
         
@@ -184,7 +192,6 @@ function build(dir) {
             rootDir: root,
             resourceDir: root + resourceFolderName + "/",
             projectName: info.name || "Documentation",
-            files: format(files, {rootDir: root}),
             navigation: format(navigation, {
                 rootDir: root
             })
