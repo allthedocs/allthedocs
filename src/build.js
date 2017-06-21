@@ -36,6 +36,8 @@ var currentDirName = "";
 //
 var filesToCopy = {};
 
+var fileLinkPattern = /^file:/;
+
 var renderer = new md.Renderer();
 
 renderer.link = function (href, title, text) {
@@ -43,7 +45,15 @@ renderer.link = function (href, title, text) {
     var isExternal = true;
     var linkType = "external-link";
     
-    if (urlHelper.isRelativeUrl(href)) {
+    if (fileLinkPattern.test(href)) {
+        
+        href = href.replace(fileLinkPattern, "").trim();
+        isExternal = false;
+        linkType = "internal-link";
+        
+        copyFileLater(href);
+    }
+    else if (urlHelper.isRelativeUrl(href)) {
         href = urlHelper.sourceUrlToOutputUrl(href);
         isExternal = false;
         linkType = "internal-link";
