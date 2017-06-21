@@ -1,5 +1,7 @@
 # ALLTHEDOCS Documentation
 
+![Default Theme](images/default-theme-screenshot.png)
+
 ALLTHEDOCS is a *simple* tool to help you generate software documentation for both users and
 developers using markdown. The big difference to other documentation solutions is that ALLTHEDOCS
 can also parse your source code and turns your comments into beautiful documentation as well!

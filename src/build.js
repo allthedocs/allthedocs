@@ -6,6 +6,7 @@
 /* eslint no-console:  off */
 
 const fs = require("fs");
+const copySync = require("fs-extra").copySync;
 const md = require("marked");
 const copy = require("ncp").ncp;
 const assert = require("assert");
@@ -23,6 +24,17 @@ const dirname = path.dirname;
 var buildNavigation = require("./build-navigation");
 var getRelativePathToRoot = require("./utils/getRelativePathToRoot");
 var urlHelper = require("./utils/urls");
+
+//
+// Directory name of the source file currently being processed.
+//
+var currentDirName = "";
+
+//
+// We use an object instead of an array for keeping track of files needing to be copied.
+// This avoids duplicates.
+//
+var filesToCopy = {};
 
 var renderer = new md.Renderer();
 
@@ -46,6 +58,19 @@ renderer.link = function (href, title, text) {
     });
 };
 
+renderer.image = function (href, title, text) {
+    
+    if (urlHelper.isRelativeUrl(href)) {
+        copyFileLater(href);
+    }
+    
+    return format('<img src="{href}" title="{title}" alt="{text}" />', {
+        href: href,
+        title: title || "",
+        text: text
+    });
+};
+
 md.setOptions({
     renderer: renderer,
     highlight: function (code, language) {
@@ -61,6 +86,18 @@ md.setOptions({
 const ERRORS = {
     NO_DOCS_FILE: "The docs.json file is missing in your project folder. Project not initialized?"
 };
+
+//
+// Adds a file path to a list of files that must be copied from the source to the output.
+// Accepts relative paths, and transforms them to absolute path by using a global
+// variable that holds the *current* dir name the source file that's being processed.
+//
+function copyFileLater(path) {
+    
+    path = normalize(currentDirName + "/" + path);
+    
+    filesToCopy[path] = "";
+}
 
 function build(dir) {
     
@@ -124,9 +161,14 @@ function build(dir) {
                 console.log("\n Preparing " + colors.blue("markdown") + " files...\n");
                 
                 docs = files.map(function (file) {
+                    
+                    var filePath = file.replace(rootDir, "");
+                    
+                    currentDirName = path.dirname(filePath);
+                    
                     return wrapContent({
                         origin: file,
-                        path: file.replace(rootDir, ""),
+                        path: filePath,
                         content: md.parse(insertBlocks("" + fs.readFileSync(file)))
                     });
                 });
@@ -136,9 +178,14 @@ function build(dir) {
                 );
                 
                 sources = sourceFiles.map(function (file) {
+                    
+                    var filePath = file.replace(rootDir, "");
+                    
+                    currentDirName = path.dirname(filePath);
+                    
                     return wrapContent({
                         origin: file,
-                        path: file.replace(rootDir, ""),
+                        path: filePath,
                         content: parseSourceFile(
                             "" + fs.readFileSync(file), codeInfo[getExtension(file)]
                         )
@@ -163,7 +210,23 @@ function build(dir) {
                 
                 writeSourceDocFiles(sources, outputDir);
                 
-                console.log(" --- " + colors.green("ALL DONE!") + " --- \n");
+                console.log(
+                    " Copying linked local resources to output folder...\n"
+                );
+                
+                Object.keys(filesToCopy).forEach(function (file) {
+                    
+                    var inputPath = normalize(rootDir + "/" + file);
+                    var outputPath = normalize(outputDir + "/" + file);
+                    
+                    console.log(
+                        "     " + file + " -> " + colors.green(outputPath.replace(rootDir, ""))
+                    );
+                    
+                    copySync(inputPath, outputPath);
+                });
+                
+                console.log("\n --- " + colors.green("ALL DONE!") + " --- \n");
                 
             }));
             
