@@ -1,6 +1,6 @@
 {
   "name": "allthedocs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Simple documentation generator using markdown",
   "main": "index.js",
   "directories": {

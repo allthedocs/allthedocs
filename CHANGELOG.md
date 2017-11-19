@@ -1,6 +1,15 @@
 
 # Changelog
 
+
+## v0.3.0 (2017-11-19)
+
+* Enhancement #4: Allow custom themes through `themeDir` config property
+* Enhancement #7: Copy linked local files to output directory
+* Change generated file list from overlay to a real page
+* Updated default theme
+
+
 ## v0.2.0
 
 * Markdown was enhanced with [blocks](docs/user/blocks.md) (GitHub issue #12)
