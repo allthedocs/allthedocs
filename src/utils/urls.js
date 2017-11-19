@@ -6,6 +6,12 @@ function isRelativeUrl(url) {
     return !(/:\/\//).test(url);
 }
 
+function isLocalUrl(url) {
+    var test = isRelativeUrl(url) && !((/\?/).test(url));
+    console.log("isLocalUrl?", url, test);
+    return test;
+}
+
 function sourceUrlToOutputUrl(url) {
     
     var parts = url.split("#");
@@ -32,5 +38,6 @@ function isMdFile(fileName) {
 module.exports = {
     isMdFile: isMdFile,
     isRelativeUrl: isRelativeUrl,
+    isLocalUrl: isLocalUrl,
     sourceUrlToOutputUrl: sourceUrlToOutputUrl
 };

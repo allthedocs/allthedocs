@@ -53,7 +53,7 @@ renderer.link = function (href, title, text) {
         
         copyFileLater(href);
     }
-    else if (urlHelper.isRelativeUrl(href)) {
+    else if (urlHelper.isLocalUrl(href)) {
         href = urlHelper.sourceUrlToOutputUrl(href);
         isExternal = false;
         linkType = "internal-link";
@@ -70,7 +70,7 @@ renderer.link = function (href, title, text) {
 
 renderer.image = function (href, title, text) {
     
-    if (urlHelper.isRelativeUrl(href)) {
+    if (urlHelper.isLocalUrl(href)) {
         copyFileLater(href);
     }
     
