@@ -7,9 +7,7 @@ function isRelativeUrl(url) {
 }
 
 function isLocalUrl(url) {
-    var test = isRelativeUrl(url) && !((/\?/).test(url));
-    console.log("isLocalUrl?", url, test);
-    return test;
+    return isRelativeUrl(url) && !((/\?/).test(url));
 }
 
 function sourceUrlToOutputUrl(url) {

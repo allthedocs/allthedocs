@@ -2,6 +2,11 @@
 # Changelog
 
 
+## v0.3.1 (2017-11-19)
+
+* Removes debug console output
+
+
 ## v0.3.0 (2017-11-19)
 
 * Enhancement #4: Allow custom themes through `themeDir` config property
