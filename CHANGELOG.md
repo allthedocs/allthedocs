@@ -1,6 +1,10 @@
 
 # Changelog
 
+## v0.3.2 (2017-12-30)
+
+* Fixes that all navigation links are treated as relative URLs
+
 
 ## v0.3.1 (2017-11-19)
 

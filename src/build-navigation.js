@@ -47,7 +47,7 @@ function buildNavigation(data, templateDir) {
         else {
             return format(navItemTemplate, {
                 label: key,
-                href: "{rootDir}" + prepareUrl(item)
+                href: prepareUrl(item)
             });
         }
     }).join("");
@@ -64,7 +64,7 @@ function buildNavigation(data, templateDir) {
             
             return format(navItemTemplate, {
                 label: key,
-                href: "{rootDir}" + prepareUrl(subItem)
+                href: prepareUrl(subItem)
             });
         }).join("");
         
@@ -76,7 +76,9 @@ function buildNavigation(data, templateDir) {
 }
 
 function prepareUrl(url) {
-    return urlHelper.isRelativeUrl(url) ? urlHelper.sourceUrlToOutputUrl(url) : url;
+    return urlHelper.isRelativeUrl(url) ?
+        ("{rootDir}" + urlHelper.sourceUrlToOutputUrl(url)) :
+        url;
 }
 
 module.exports = buildNavigation;
